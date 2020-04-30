@@ -6,10 +6,16 @@ const pool = new Pool({
   database: 'bootcampx'
 });
 
-const cohort = process.argv[2];
-const limit = process.argv[3];
+const cohortName = process.argv[2];
+const limit = process.argv[3] || 5;
+const values = [cohortName, limit];
 
-pool.query('SELECT students.id AS student_id, students.name AS student_name, cohorts.name AS cohort FROM students JOIN cohorts ON cohorts.id = cohort_id WHERE cohorts.name = $1 LIMIT $2;', [cohort, limit])
+pool.query(`
+  SELECT students.id AS student_id, students.name AS student_name, cohorts.name AS cohort 
+  FROM students 
+  JOIN cohorts ON cohorts.id = cohort_id 
+  WHERE cohorts.name = $1 
+  LIMIT $2;`, values)
   .then(res => {
     console.log(res.rows);
   })
